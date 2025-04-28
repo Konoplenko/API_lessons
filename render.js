@@ -1,4 +1,3 @@
-
 import { comments } from './comments.js';
 
 export function renderComments() {
