@@ -1,5 +1,10 @@
-import { addComment, toggleLike } from './comments.js';
+import { addComment, toggleLike, comments } from './comments.js';
 import { renderComments } from './render.js';
+
+let formData = {
+  name: '',
+  text: ''
+};
 
 export function initEventListeners() {
   const nameInput = document.querySelector('.add-form-name');
@@ -7,13 +12,24 @@ export function initEventListeners() {
   const addButton = document.querySelector('.add-form-button');
   const commentLoader = document.getElementById('comment-loader');
   const addForm = document.querySelector('.add-form');
-  
+
+  nameInput.value = formData.name;
+  textInput.value = formData.text;
+
+  nameInput.addEventListener('input', (e) => {
+    formData.name = e.target.value;
+  });
+
+  textInput.addEventListener('input', (e) => {
+    formData.text = e.target.value;
+  });
+
   addButton.addEventListener('click', () => {
     const name = nameInput.value.trim();
     const text = textInput.value.trim();
 
     if (name.length < 3 || text.length < 3) {
-      alert('Имя и текст должны содержать хотя бы 3 символа');
+      alert('Имя и комментарий должны быть не короче 3 символов');
       return;
     }
 
@@ -25,10 +41,11 @@ export function initEventListeners() {
       .then(() => {
         nameInput.value = '';
         textInput.value = '';
+        formData = { name: '', text: '' };
         renderComments();
       })
       .catch(error => {
-        console.error('Ошибка:', error);
+        alert(error.message);
       })
       .finally(() => {
         addButton.disabled = false;
@@ -74,6 +91,10 @@ function handleCommentClick(e) {
   if (nameInput && textInput) {
     nameInput.value = comment.name;
     textInput.value = `> ${comment.text}\n\n`;
+    formData = {
+      name: comment.name,
+      text: `> ${comment.text}\n\n`
+    };
     textInput.focus();
   }
 }

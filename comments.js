@@ -6,18 +6,25 @@ export async function loadComments() {
   try {
     comments = await getComments();
   } catch (error) {
-    alert(error.message);
+    if (error.message.includes('интернет')) {
+      alert('Кажется, у вас сломался интернет, попробуйте позже');
+    } else {
+      alert(error.message);
+    }
     comments = []; 
   }
 }
 
 export async function addComment(name, text) {
   try {
+    if (name.length < 3 || text.length < 3) {
+      throw new Error('Имя и комментарий должны быть не короче 3 символов');
+    }
+    
     await postComment({ name, text });
     await loadComments(); 
   } catch (error) {
-    alert(error.message);
-    throw error; 
+    throw error;
   }
 }
 

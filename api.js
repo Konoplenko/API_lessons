@@ -1,8 +1,12 @@
-const host = "https://wedev-api.sky.pro/api/v1/alena-konoplenko"
+const host = "https://wedev-api.sky.pro/api/v1/alena-konoplenko";
 
 export async function getComments() {
   try {
     const response = await fetch(host + `/comments`);
+    
+    if (response.status === 500) {
+      throw new Error('Сервер сломался, попробуй позже');
+    }
     
     if (!response.ok) {
       throw new Error('Ошибка при загрузке комментариев');
@@ -16,7 +20,9 @@ export async function getComments() {
     }));
     
   } catch (error) {
-    console.error('Ошибка:', error);
+    if (error.message === 'Failed to fetch') {
+      throw new Error('Кажется, у вас сломался интернет, попробуйте позже');
+    }
     throw error;
   }
 }
@@ -27,19 +33,29 @@ export async function postComment({ name, text }) {
       method: 'POST',
       body: JSON.stringify({
         text: text,
-        name: name
+        name: name,
+        forceError: true
       })
     });
     
+    if (response.status === 400) {
+      throw new Error('Имя и комментарий должны быть не короче 3 символов');
+    }
+    
+    if (response.status === 500) {
+      throw new Error('Сервер сломался, попробуй позже');
+    }
+    
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Ошибка при добавлении комментария');
+      throw new Error('Ошибка при добавлении комментария');
     }
     
     return await response.json();
     
   } catch (error) {
-    console.error('Ошибка:', error);
+    if (error.message === 'Failed to fetch') {
+      throw new Error('Кажется, у вас сломался интернет, попробуйте позже');
+    }
     throw error;
   }
 }
