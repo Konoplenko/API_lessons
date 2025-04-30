@@ -25,6 +25,9 @@ export async function postComment({ name, text }) {
   try {
     const response = await fetch(host + `/comments`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         text: text,
         name: name
