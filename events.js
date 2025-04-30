@@ -11,31 +11,34 @@ export function initEventListeners() {
   addButton.addEventListener('click', () => {
     const name = nameInput.value.trim();
     const text = textInput.value.trim();
+    const loadingOverlay = document.getElementById('loading-overlay');
 
     if (name.length < 3 || text.length < 3) {
-      alert('Имя и текст должны содержать хотя бы 3 символа');
-      return;
+        alert('Имя и текст должны содержать хотя бы 3 символа');
+        return;
     }
 
     addButton.disabled = true;
     addForm.style.opacity = '0.5';
     commentLoader.style.display = 'block';
+    loadingOverlay.style.display = 'block';
     
     addComment(name, text)
-      .then(() => {
-        nameInput.value = '';
-        textInput.value = '';
-        renderComments();
-      })
-      .catch(error => {
-        console.error('Ошибка:', error);
-      })
-      .finally(() => {
-        addButton.disabled = false;
-        addForm.style.opacity = '1';
-        commentLoader.style.display = 'none';
-      });
-  });
+        .then(() => {
+            nameInput.value = '';
+            textInput.value = '';
+            renderComments();
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+        })
+        .finally(() => {
+            addButton.disabled = false;
+            addForm.style.opacity = '1';
+            commentLoader.style.display = 'none';
+            loadingOverlay.style.display = 'none';
+        });
+});
 
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains('like-button')) {
