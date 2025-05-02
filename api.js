@@ -1,4 +1,4 @@
-const host = "https://wedev-api.sky.pro/api/v1/alena-konoplenko"
+const host = "https://wedev-api.sky.pro/api/v1/alena-konoplenko";
 
 export async function getComments() {
   try {
@@ -25,9 +25,6 @@ export async function postComment({ name, text }) {
   try {
     const response = await fetch(host + `/comments`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({
         text: text,
         name: name

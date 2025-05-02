@@ -1,35 +1,35 @@
-import { addComment, toggleLike, comments } from './comments.js';
-import { renderComments } from './render.js'
+import { addComment } from './comments.js';
+import { renderComments } from './render.js';
 
 export function initEventListeners() {
-    const nameInput = document.querySelector('.add-form-name')
-    const textInput = document.querySelector('.add-form-text')
-    const addButton = document.querySelector('.add-form-button')
-    const loader = document.querySelector('.loader')
+    const nameInput = document.querySelector('.add-form-name');
+    const textInput = document.querySelector('.add-form-text');
+    const addButton = document.querySelector('.add-form-button');
+    const loader = document.querySelector('.loader');
 
     addButton.addEventListener('click', async () => {
-        const name = nameInput.value.trim()
-        const text = textInput.value.trim()
+        const name = nameInput.value.trim();
+        const text = textInput.value.trim();
 
         if (name.length < 3 || text.length < 3) {
-            alert('Имя и текст должны содержать хотя бы 3 символа')
-            return
+            alert('Имя и текст должны содержать хотя бы 3 символа');
+            return;
         }
 
         try {
-            addButton.disabled = true
-            loader.style.display = 'block'
+            addButton.disabled = true;
+            loader.style.display = 'block';
 
-            await addComment(name, text)
+            await addComment(name, text);
 
-            nameInput.value = ''
-            textInput.value = ''
-            renderComments()
-          } catch (error) {
+            nameInput.value = '';
+            textInput.value = '';
+            renderComments();
+        } catch (error) {
             alert('Ошибка при добавлении комментария: ' + error.message);
         } finally {
-            addButton.disabled = false
-            loader.style.display = 'none'
+            addButton.disabled = false;
+            loader.style.display = 'none';
         }
     });
 
