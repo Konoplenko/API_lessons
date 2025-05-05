@@ -29,5 +29,3 @@ export function toggleLike(index) {
 export function getQuotedText(commentText) {
   return `> ${commentText}\n\n`;
 }
-
-// merge
