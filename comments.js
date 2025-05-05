@@ -12,7 +12,6 @@ export async function loadComments() {
     }));
   } catch (error) {
     alert(error.message);
-    comments = []; 
   }
 }
 
