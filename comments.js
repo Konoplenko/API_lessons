@@ -1,40 +1,35 @@
-export let comments = [
-    {
-        name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        text: 'Это будет первый комментарий на этой странице',
-        likes: 3,
-        isLiked: false,
-    },
-    {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        text: 'Мне нравится как оформлена эта страница! ❤',
-        likes: 75,
-        isLiked: true,
-    },
-];
+import { getComments, postComment } from './api.js';
 
-export function addComment(name, text) {
-    comments.push({
-        name: name,
-        date: getCurrentDateTime(),
-        text: text,
-        likes: 0,
-        isLiked: false,
-    });
+export let comments = [];
+
+export async function loadComments() {
+  try {
+    const loadedComments = await getComments();
+    comments = loadedComments.map(comment => ({
+      ...comment,
+      likes: comment.likes || 0,     
+      isLiked: comment.isLiked || false
+    }));
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+export async function addComment(name, text) {
+  try {
+    await postComment({ name, text });
+    await loadComments(); 
+  } catch (error) {
+    alert(error.message);
+    throw error; 
+  }
 }
 
 export function toggleLike(index) {
-    comments[index].isLiked = !comments[index].isLiked;
-    comments[index].likes += comments[index].isLiked ? 1 : -1;
-}
-
-function getCurrentDateTime() {
-    const now = new Date();
-    return `${now.toLocaleDateString()} ${now.toLocaleTimeString().slice(0, 5)}`;
+  comments[index].isLiked = !comments[index].isLiked;
+  comments[index].likes += comments[index].isLiked ? 1 : -1;
 }
 
 export function getQuotedText(commentText) {
-    return `> ${commentText}\n\n`;
+  return `> ${commentText}\n\n`;
 }
