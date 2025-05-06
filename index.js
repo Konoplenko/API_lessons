@@ -14,7 +14,7 @@ function initApp() {
   loadComments()
     .then(() => {
       renderComments();
-      initEventListeners();
+      handleAddComment();
     })
     .catch(error => {
       console.error('Ошибка при инициализации приложения:', error);

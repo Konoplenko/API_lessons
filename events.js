@@ -27,6 +27,7 @@ export function initEventListeners() {
   addButton.addEventListener('click', () => {
     const name = nameInput.value.trim();
     const text = textInput.value.trim();
+    const loadingOverlay = document.getElementById('loading-overlay');
 
     if (name.length < 3 || text.length < 3) {
       alert('Имя и комментарий должны быть не короче 3 символов');
@@ -36,6 +37,7 @@ export function initEventListeners() {
     addButton.disabled = true;
     addForm.style.opacity = '0.5';
     commentLoader.style.display = 'block';
+    loadingOverlay.style.display = 'block';
     
     addComment(name, text)
       .then(() => {
@@ -63,7 +65,7 @@ export function initEventListeners() {
   });
 }
 
-function handleLike(e) {
+function handleLikeClick(e) {
   e.stopPropagation();
   const commentElement = e.target.closest('.comment');
   if (!commentElement) return;
