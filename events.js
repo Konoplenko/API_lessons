@@ -1,5 +1,4 @@
 import { addComment, toggleLike, comments } from './comments.js';
-import { addComment, toggleLike, comments } from './comments.js';
 import { renderComments } from './render.js';
 
 let formData = {

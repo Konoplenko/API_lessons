@@ -4,12 +4,7 @@ export let comments = [];
 
 export async function loadComments() {
   try {
-    const loadedComments = await getComments();
-    comments = loadedComments.map(comment => ({
-      ...comment,
-      likes: comment.likes || 0,     
-      isLiked: comment.isLiked || false
-    }));
+    comments = await getComments();
   } catch (error) {
     if (error.message.includes('интернет')) {
       alert('Кажется, у вас сломался интернет, попробуйте позже');
