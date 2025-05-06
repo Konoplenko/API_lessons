@@ -1,7 +1,7 @@
-import { addComment, toggleLike } from './comments.js';
+import { addComment, toggleLike, comments } from './comments.js';
 import { renderComments } from './render.js';
 
-export function initEventListeners() {
+export function handleAddComment() {
   const nameInput = document.querySelector('.add-form-name');
   const textInput = document.querySelector('.add-form-text');
   const addButton = document.querySelector('.add-form-button');
@@ -49,7 +49,7 @@ export function initEventListeners() {
   });
 }
 
-function handleLike(e) {
+function handleLikeClick(e) {
   e.stopPropagation();
   const commentElement = e.target.closest('.comment');
   if (!commentElement) return;

@@ -4,10 +4,14 @@ export let comments = [];
 
 export async function loadComments() {
   try {
-    comments = await getComments();
+    const loadedComments = await getComments();
+    comments = loadedComments.map(comment => ({
+      ...comment,
+      likes: comment.likes || 0,     
+      isLiked: comment.isLiked || false
+    }));
   } catch (error) {
     alert(error.message);
-    comments = []; 
   }
 }
 

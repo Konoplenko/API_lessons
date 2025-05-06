@@ -1,4 +1,4 @@
-const host = "https://wedev-api.sky.pro/api/v1/alena-konoplenko"
+const host = "https://wedev-api.sky.pro/api/v1/alena-konoplenko";
 
 export async function getComments() {
   try {

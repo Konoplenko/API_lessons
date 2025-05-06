@@ -1,6 +1,6 @@
 import { renderComments } from './render.js';
 import { loadComments } from './comments.js';
-import { initEventListeners } from './events.js';
+import { handleAddComment } from './events.js';
 
 document.body.insertAdjacentHTML('afterbegin', `
   <div class="loader" id="global-loader" style="display: none;">Загрузка комментариев...</div>
@@ -14,7 +14,7 @@ function initApp() {
   loadComments()
     .then(() => {
       renderComments();
-      initEventListeners();
+      handleAddComment();
     })
     .catch(error => {
       console.error('Ошибка при инициализации приложения:', error);
