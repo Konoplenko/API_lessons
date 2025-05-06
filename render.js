@@ -1,5 +1,4 @@
 import { comments } from './comments.js';
-import { handleLikeClick, handleQuoteClick } from './events.js';
 
 export function renderComments() {
     const commentsList = document.querySelector('.comments');
@@ -25,14 +24,6 @@ export function renderComments() {
         `,
         )
         .join('');
-
-    document.querySelectorAll('.like-button').forEach(button => {
-        button.addEventListener('click', handleLikeClick);
-    });
-
-    document.querySelectorAll('.comment').forEach(comment => {
-        comment.addEventListener('click', handleQuoteClick);
-    });
 }
 
 function escapeHtml(unsafe) {

@@ -1,6 +1,6 @@
 import { renderComments } from './render.js';
 import { loadComments } from './comments.js';
-import { handleAddComment } from './events.js';
+import { initEventListeners } from './events.js';
 
 document.body.insertAdjacentHTML('afterbegin', `
   <div class="loader" id="global-loader" style="display: none;">Загрузка комментариев...</div>
