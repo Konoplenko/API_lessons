@@ -1,60 +1,92 @@
-import { addComment, toggleLike, comments } from './comments.js';
+import { addComment, toggleLikeComment, comments } from './comments.js';
 import { renderComments } from './render.js';
+import { authorize, isAuthorized, updateUI } from './auth.js';
 
 let formData = {
-  name: '',
   text: ''
 };
 
 export function initEventListeners() {
-  const nameInput = document.querySelector('.add-form-name');
+  const authLink = document.getElementById('auth-link');
+  if (authLink) {
+    authLink.addEventListener('click', () => {
+      document.querySelector('.comments').style.display = 'none';
+      document.getElementById('login-page').style.display = 'block';
+    });
+  }
+
+  const loginButton = document.querySelector('.login-button');
+  if (loginButton) {
+    loginButton.addEventListener('click', async () => {
+      const loginInput = document.querySelector('.login-input');
+      const passwordInput = document.querySelector('.password-input');
+      const errorElement = document.querySelector('.login-error');
+      
+      const loginValue = loginInput.value.trim();
+      const passwordValue = passwordInput.value.trim();
+      
+      if (!loginValue || !passwordValue) {
+        errorElement.textContent = 'Введите логин и пароль';
+        errorElement.style.display = 'block';
+        return;
+      }
+      
+      try {
+        await authorize({ login: loginValue, password: passwordValue });
+        document.getElementById('login-page').style.display = 'none';
+        document.querySelector('.comments').style.display = 'flex';
+        updateUI();
+      } catch (error) {
+        errorElement.textContent = error.message;
+        errorElement.style.display = 'block';
+      }
+    });
+  }
+
   const textInput = document.querySelector('.add-form-text');
   const addButton = document.querySelector('.add-form-button');
   const commentLoader = document.getElementById('comment-loader');
   const addForm = document.querySelector('.add-form');
 
-  nameInput.value = formData.name;
-  textInput.value = formData.text;
+  if (textInput) {
+    textInput.value = formData.text;
 
-  nameInput.addEventListener('input', (e) => {
-    formData.name = e.target.value;
-  });
+    textInput.addEventListener('input', (e) => {
+      formData.text = e.target.value;
+    });
+  }
 
-  textInput.addEventListener('input', (e) => {
-    formData.text = e.target.value;
-  });
+  if (addButton) {
+    addButton.addEventListener('click', () => {
+      if (!isAuthorized()) return;
+      
+      const text = textInput.value.trim();
 
-  addButton.addEventListener('click', () => {
-    const name = nameInput.value.trim();
-    const text = textInput.value.trim();
-    const loadingOverlay = document.getElementById('loading-overlay');
+      if (text.length < 3) {
+        alert('Комментарий должен быть не короче 3 символов');
+        return;
+      }
 
-    if (name.length < 3 || text.length < 3) {
-      alert('Имя и комментарий должны быть не короче 3 символов');
-      return;
-    }
-
-    addButton.disabled = true;
-    addForm.style.opacity = '0.5';
-    commentLoader.style.display = 'block';
-    loadingOverlay.style.display = 'block';
-    
-    addComment(name, text)
-      .then(() => {
-        nameInput.value = '';
-        textInput.value = '';
-        formData = { name: '', text: '' };
-        renderComments();
-      })
-      .catch(error => {
-        alert(error.message);
-      })
-      .finally(() => {
-        addButton.disabled = false;
-        addForm.style.opacity = '1';
-        commentLoader.style.display = 'none';
-      });
-  });
+      addButton.disabled = true;
+      addForm.style.opacity = '0.5';
+      commentLoader.style.display = 'block';
+      
+      addComment(text)
+        .then(() => {
+          textInput.value = '';
+          formData = { text: '' };
+          renderComments();
+        })
+        .catch(error => {
+          alert(error.message);
+        })
+        .finally(() => {
+          addButton.disabled = false;
+          addForm.style.opacity = '1';
+          commentLoader.style.display = 'none';
+        });
+    });
+  }
 
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains('like-button')) {
@@ -73,8 +105,10 @@ function handleLikeClick(e) {
   const index = commentElement.dataset.id;
   if (index === undefined) return;
   
-  toggleLike(index);
-  renderComments();
+  const comment = comments[index];
+  toggleLikeComment(comment.id)
+    .then(() => renderComments())
+    .catch(error => alert(error.message));
 }
 
 function handleCommentClick(e) {
@@ -87,14 +121,11 @@ function handleCommentClick(e) {
   if (index === undefined) return;
   
   const comment = comments[index];
-  const nameInput = document.querySelector('.add-form-name');
   const textInput = document.querySelector('.add-form-text');
   
-  if (nameInput && textInput) {
-    nameInput.value = comment.name;
+  if (textInput) {
     textInput.value = `> ${comment.text}\n\n`;
     formData = {
-      name: comment.name,
       text: `> ${comment.text}\n\n`
     };
     textInput.focus();
